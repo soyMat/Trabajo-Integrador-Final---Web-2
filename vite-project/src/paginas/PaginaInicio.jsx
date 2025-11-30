@@ -51,7 +51,7 @@ function PaginaInicio() {
 
         <div className="banner-principal__contenido">
           <h1 className="banner-principal__titulo">SYSTEM UPDATE</h1>
-          <p className="banner-principal__subtitulo">Calzado, indumentaria y accesorios para hombre y mujer.</p>
+          <p className="banner-principal__subtitulo">Calzado, indumentaria y accesorios.</p>
           <button type="button" className="boton-primario">Ver productos en descuento</button>
         </div>
         </section>

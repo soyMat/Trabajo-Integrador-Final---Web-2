@@ -167,10 +167,10 @@ body {
 }
 
 .banner-principal__imagen-foto {
-  width: 100%;
+  width: 65%;
   height: 100%;
   object-fit: cover;
-  display: block;
+  display: center;
 }
 
 .banner-principal__contenido {
