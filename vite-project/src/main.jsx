@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import PaginaInicio from './paginas/PaginaInicio.jsx'
+import { BrowserRouter } from 'react-router-dom'   // 👈 ASÍ, con llaves
+import Aplicacion from './Aplicacion.jsx'
 import Beams from './componentes/Beams.jsx'
 import './index.css'
 
@@ -25,7 +26,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 
       {/* App */}
       <div className="relative z-10">
-        <PaginaInicio />
+        <BrowserRouter>
+          <Aplicacion />
+        </BrowserRouter>
       </div>
     </div>
   </React.StrictMode>,
