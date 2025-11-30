@@ -22,3 +22,7 @@ Para ejecutar el proyecto de forma local se necesita:
 - Node.js (versión LTS recomendada por la cátedra, por ejemplo Node 18 o superior).
 - NPM (incluido con Node).
 - Git (para clonar el repositorio).
+  
+### Dependencias adicionales por implementacion de la biblioteca REACT BITS "https://www.reactbits.dev/"
+-   npm install @react-bits/beams-js-tw framer-motion
+-
