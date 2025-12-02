@@ -30,4 +30,5 @@ Para ejecutar el proyecto de forma local se necesita:
 - Node.js (Node 18)
 - npm (incluido con Node)
 - Git (para clonar el repositorio)
+- npm install react-router-dom
 - Dependecia adicional por el Background de la libreria React Bits - npm install three @react-three/fiber @react-three/drei
