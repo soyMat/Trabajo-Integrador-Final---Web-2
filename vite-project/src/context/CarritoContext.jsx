@@ -1,68 +1,118 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
 
 // contexto general del carrito
 const CarritoContext = createContext(null)
 
 // funcion para calcular precio final con descuento
 function calcularPrecioFinal(producto) {
-  const tieneOferta = producto.tags && Array.isArray(producto.tags) && producto.tags.some(tag => tag.title === 'Oferta')
+  const tieneOferta =
+    producto.tags &&
+    Array.isArray(producto.tags) &&
+    producto.tags.some(tag => tag.title === 'Oferta')
+
   const precioBase = producto.price || 0
   const precioConDescuento = tieneOferta ? Math.round(precioBase * 0.8) : precioBase
+
   return { precioBase, precioConDescuento, tieneOferta }
 }
 
 export function CarritoProvider({ children }) {
   // cada item: { id, title, precioFinal, cantidad, ...producto }
-  const [items, setItems] = useState([])
+  const [items, setItems] = useState(() => {
+    try {
+      const guardado = localStorage.getItem('carrito')
+      return guardado ? JSON.parse(guardado) : []
+    } catch (error) {
+      console.error('Error leyendo carrito de localStorage', error)
+      return []
+    }
+  })
 
+  // sincronizar con localStorage cada vez que cambie el carrito
+  useEffect(() => {
+    try {
+      localStorage.setItem('carrito', JSON.stringify(items))
+    } catch (error) {
+      console.error('Error guardando carrito en localStorage', error)
+    }
+  }, [items])
 
-  // agrega producto, si ya existe suma 1 a cantidad
+  // agregar un producto (si ya existe, suma 1 unidad)
   function agregarProducto(producto) {
+    if (!producto || !producto.id) return
+
     const { precioConDescuento } = calcularPrecioFinal(producto)
 
-    setItems(prev => {
-      const existente = prev.find(item => item.id === producto.id)
-      if (existente) {
-        return prev.map(item => item.id === producto.id ? { ...item, cantidad: item.cantidad + 1 } : item)
+    setItems(prevItems => {
+      const existe = prevItems.find(item => item.id === producto.id)
+
+      if (existe) {
+        return prevItems.map(item =>
+          item.id === producto.id
+            ? { ...item, cantidad: item.cantidad + 1 }
+            : item
+        )
       }
-      return [...prev, { ...producto, precioFinal: precioConDescuento, cantidad: 1 }]
+
+      const nuevoItem = {
+        id: producto.id,
+        title: producto.title,
+        precioFinal: precioConDescuento,
+        cantidad: 1,
+        ...producto
+      }
+
+      return [...prevItems, nuevoItem]
     })
   }
 
-
-  // resta una unidad, si queda en 0 lo saca del carrito
-  function quitarUnidad(idProducto) {
-    setItems(prev => {
-      const encontrado = prev.find(item => item.id === idProducto)
-      if (!encontrado) return prev
-      if (encontrado.cantidad <= 1) return prev.filter(item => item.id !== idProducto)
-      return prev.map(item => item.id === idProducto ? { ...item, cantidad: item.cantidad - 1 } : item)
-    })
+  // quitar una unidad del producto (si queda en 0, se elimina)
+  function quitarUnidad(id) {
+    setItems(prevItems =>
+      prevItems
+        .map(item =>
+          item.id === id
+            ? { ...item, cantidad: item.cantidad - 1 }
+            : item
+        )
+        .filter(item => item.cantidad > 0)
+    )
   }
 
-
-  // elimina el item completo
-  function eliminarProducto(idProducto) {
-    setItems(prev => prev.filter(item => item.id !== idProducto))
+  // eliminar el producto por completo del carrito
+  function eliminarProducto(id) {
+    setItems(prevItems => prevItems.filter(item => item.id !== id))
   }
 
-
-  // vacia todo el carrito
+  // vaciar todo el carrito
   function vaciarCarrito() {
     setItems([])
   }
 
-
-  // cantidad total de unidades en el carrito
+  // cantidad total de unidades
   const cantidadTotal = items.reduce((acum, item) => acum + item.cantidad, 0)
 
-
   // total a pagar segun precioFinal * cantidad
-  const total = items.reduce((acum, item) => acum + item.precioFinal * item.cantidad, 0)
+  const total = items.reduce(
+    (acum, item) => acum + item.precioFinal * item.cantidad,
+    0
+  )
 
-  const valor = { items, agregarProducto, quitarUnidad, eliminarProducto, vaciarCarrito, cantidadTotal, total }
+  const valor = {
+    items,
+    agregarProducto,
+    quitarUnidad,
+    eliminarProducto,
+    vaciarCarrito,
+    cantidadTotal,
+    total
+  }
 
-  return <CarritoContext.Provider value={valor}>{children}</CarritoContext.Provider>
+  return (
+    <CarritoContext.Provider value={valor}>
+      {children}
+    </CarritoContext.Provider>
+  )
 }
 
 // hook de ayuda para usar el contexto

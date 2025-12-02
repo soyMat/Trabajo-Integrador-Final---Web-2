@@ -77,41 +77,27 @@ function PaginaInicio() {
 
       <div className="w-full max-w-5xl px-6 py-6 flex flex-col gap-4">
 
-        {/* logo, buscador y botones de sesion y carrito */}
-        <header className="grid grid-cols-1 md:grid-cols-[1fr_2fr_1fr] items-center gap-4">
-
-
+        {/* logo y botones de sesion y carrito */}
+        <header className="grid grid-cols-1 md:grid-cols-[1fr_auto] items-center gap-4">
 
           {/* logo fijo */}
-          <div className="flex items-center">
+          <div className="flex items-center justify-center md:justify-start">
             <img src={logosinfondo} alt="Logo" className="h-20 w-auto" />
           </div>
 
-
-
-          {/* barra de busqueda */}
-          <div className="flex justify-center w-full">
-            <form className="flex w-full max-w-md rounded-full bg-black/40 border border-white/20 px-3 py-1">
-              <input type="search" placeholder="Buscar productos..." aria-label="Buscar productos" className="flex-1 bg-transparent outline-none text-sm text-white placeholder:text-gray-400" />
-              <button type="submit" className="text-sm px-2 text-gray-200" onClick={(e) => e.preventDefault()}>🔎</button>
-            </form>
-          </div>
-
-
-
-          {/* botones de inicio de sesion y carrito */}
-          <div className="flex justify-end gap-2">
-            <button type="button" className="px-3 py-1 rounded-full border border-white/20 text-xs md:text-sm hover:bg-white/10 transition">Iniciar sesion</button>
+          {/* botones de inicio de sesion admin y carrito */}
+          <div className="flex items-center justify-center md:justify-end gap-2 w-full">
+            <button type="button" onClick={() => navigate('/admin')}   //login admin
+              className="px-3 py-1 rounded-full border border-white/20 text-xs md:text-sm hover:bg-white/10 transition" > Iniciar sesión admin </button>
             <BotonCarrito onClick={() => setCarritoAbierto(true)} />
           </div>
         </header>
 
 
-
         {/* botones que navegan a categoria Hombre o Mujer */}
         <nav aria-label="Categorias principales" className="flex justify-center gap-3 py-2">
-          <button type="button" onClick={() => navigate('/categoria/hombre')} className="px-4 py-1 rounded-full border border-white/20 text-sm hover:bg-white/10 transition">Hombre</button>
-          <button type="button" onClick={() => navigate('/categoria/mujer')} className="px-4 py-1 rounded-full border border-white/20 text-sm hover:bg-white/10 transition">Mujer</button>
+          <button type="button" onClick={() => navigate('/categoria/hombre')} className="px-4 py-1 rounded-full border border-white/20 text-sm hover:bg-white/10 transition"> Hombre </button>
+          <button type="button" onClick={() => navigate('/categoria/mujer')} className="px-4 py-1 rounded-full border border-white/20 text-sm hover:bg-white/10 transition" > Mujer </button>
         </nav>
 
         <main className="flex flex-col gap-4">

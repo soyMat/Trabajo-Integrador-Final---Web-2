@@ -16,15 +16,7 @@ function Carrito() {
         <header className="grid grid-cols-1 md:grid-cols-[1fr_2fr_1fr] items-center gap-4">
           <button type="button" onClick={() => navigate('/')} className="flex items-center"> <img src={logosinfondo} alt="Logo" className="h-20 w-auto" /> </button>
 
-          <div className="flex justify-center w-full">
-            <form className="flex w-full max-w-md rounded-full bg-black/40 border border-white/20 px-3 py-1">
-              <input type="search" placeholder="Buscar productos..." aria-label="Buscar productos" className="flex-1 bg-transparent outline-none text-sm text-white placeholder:text-gray-400" />
-              <button type="submit" className="text-sm px-2 text-gray-200" onClick={(e) => e.preventDefault()}>🔎</button>
-            </form>
-          </div>
-
           <div className="flex justify-end gap-2">
-            <button type="button" className="px-3 py-1 rounded-full border border-white/20 text-xs md:text-sm hover:bg-white/10 transition">Iniciar sesion</button>
             <button type="button" className="px-3 py-1 rounded-full border border-white/20 text-xs md:text-sm opacity-60 cursor-default">Carrito</button>
           </div>
         </header>

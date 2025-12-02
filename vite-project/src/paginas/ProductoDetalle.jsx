@@ -95,15 +95,7 @@ function ProductoDetalle() {
             <img src={logosinfondo} alt="Logo" className="h-16 w-auto" />
           </button>
 
-          <div className="flex justify-center w-full">
-            <form className="flex w-full max-w-md rounded-full bg-black/40 border border-white/20 px-3 py-1">
-              <input type="search" placeholder="Buscar productos..." aria-label="Buscar productos" className="flex-1 bg-transparent outline-none text-sm text-white placeholder:text-gray-400" />
-              <button type="submit" className="text-sm px-2 text-gray-200" onClick={(event) => event.preventDefault()}>🔎</button>
-            </form>
-          </div>
-
           <div className="flex justify-end gap-2">
-            <button type="button" className="px-3 py-1 rounded-full border border-white/20 text-xs md:text-sm hover:bg-white/10 transition">Iniciar sesion</button>
             <BotonCarrito onClick={() => setCarritoAbierto(true)} />
           </div>
         </header>

@@ -4,11 +4,13 @@ import logosinfondo from '../imagenes/logo-sin-fondo.PNG'
 import BotonCarrito from '../componentes/BotonCarrito.jsx'
 import CarritoMini from '../componentes/CarritoMini.jsx'
 import { useCarrito } from '../context/CarritoContext.jsx'
+import BuscadorProductos, { filtrarProductosPorBusqueda } from '../componentes/BuscadorProductos.jsx'
 
 // pagina de categoria para productos "Mujer"
 function CategoriaMujer() {
   const navigate = useNavigate()
   const { agregarProducto } = useCarrito()
+  const [busqueda, setBusqueda] = useState('')
 
   const [productos, setProductos] = useState([])
   const [loading, setLoading] = useState(true)
@@ -68,6 +70,9 @@ function CategoriaMujer() {
     return true
   })
 
+  // tercer filtro, por texto de busqueda (nombre, descripcion o categoria)
+  const productosFiltradosPorBusqueda = filtrarProductosPorBusqueda(productosFiltrados,busqueda)
+
   function obtenerImagen(producto) {
     if (producto.pictures && producto.pictures.length > 0) return 'http://161.35.104.211:8000' + producto.pictures[0]
     return null
@@ -85,15 +90,12 @@ function CategoriaMujer() {
             <img src={logosinfondo} alt="Logo" className="h-20 w-auto" />
           </button>
 
-          <div className="flex justify-center w-full">
-            <form className="flex w-full max-w-md rounded-full bg-black/40 border border-white/20 px-3 py-1">
-              <input type="search" placeholder="Buscar productos..." aria-label="Buscar productos" className="flex-1 bg-transparent outline-none text-sm text-white placeholder:text-gray-400" />
-              <button type="submit" className="text-sm px-2 text-gray-200" onClick={(e) => e.preventDefault()}>🔎</button>
-            </form>
-          </div>
+      <div className="flex justify-center w-full">
+        <BuscadorProductos busqueda={busqueda} onBusquedaChange={setBusqueda}/>
+      </div>
+
 
           <div className="flex justify-end gap-2">
-            <button type="button" className="px-3 py-1 rounded-full border border-white/20 text-xs md:text-sm hover:bg-white/10 transition">Iniciar sesion</button>
             <BotonCarrito onClick={() => setCarritoAbierto(true)} />
           </div>
         </header>
@@ -117,7 +119,7 @@ function CategoriaMujer() {
             <p className="text-sm text-gray-300">No se encontraron productos para esta categoria.</p>
           ) : (
             <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {productosFiltrados.map((producto) => {
+              {productosFiltradosPorBusqueda.map((producto) => {
                 const imagen = obtenerImagen(producto)
                 const tieneOferta = producto.tags && producto.tags.some((tag) => tag.title === 'Oferta')
                 const precioConDescuento = tieneOferta ? Math.round(producto.price * 0.8) : producto.price
