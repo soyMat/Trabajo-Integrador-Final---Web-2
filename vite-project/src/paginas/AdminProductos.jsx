@@ -28,6 +28,7 @@ function AdminProductos() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [editingId, setEditingId] = useState(null)
+  const [imagenFile, setImagenFile] = useState(null)
 
   const [form, setForm] = useState({
     title: '',
@@ -86,6 +87,39 @@ function AdminProductos() {
     setForm(prev => ({ ...prev, genero: valor }))
   }
 
+  // cuando el usuario elige una imagen
+  function onChangeImagen(e) {
+    const file = e.target.files && e.target.files[0]
+    setImagenFile(file || null)
+  }
+
+
+
+  // sube la imagen del producto usando el endpoint /products/{product_id}/pictures
+  async function subirImagenProducto(productId) {
+    if (!imagenFile) return null
+
+    const formData = new FormData()
+    formData.append('files', imagenFile)
+
+    const res = await fetch(`${URL_API}/products/${productId}/pictures`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        Authorization: 'Bearer mat'
+      },
+      body: formData
+    })
+
+    if (!res.ok) {
+      const texto = await res.text()
+      console.error('Error al subir imagen', res.status, texto)
+      throw new Error('No se pudo subir la imagen del producto')
+    }
+
+    const data = await res.json()
+    return Array.isArray(data.picture_urls) ? data.picture_urls : null
+  }
 
 
   function comenzarEdicion(prod) {
@@ -100,6 +134,7 @@ function AdminProductos() {
     }
 
     setEditingId(prod.id)
+    setImagenFile(null)
     setForm({
       title: prod.title || '',
       description: prod.description || '',
@@ -170,18 +205,38 @@ function AdminProductos() {
         setError('La API rechazó la operación (ver consola).')
         return
       }
-
       const productoApi = await res.json()
+
+      // si hay imagen seleccionada, la subimos ahora
+      let productoConImagen = productoApi
+      if (imagenFile) {
+        try {
+          const pictureUrls = await subirImagenProducto(productoApi.id)
+          if (pictureUrls && pictureUrls.length > 0) {
+            const actuales = Array.isArray(productoApi.pictures)
+              ? productoApi.pictures: []
+            productoConImagen = {...productoApi,
+              pictures: [...actuales, ...pictureUrls]
+            }
+          }
+        } catch (eImg) {
+          console.error(eImg)
+          setError(
+            'El producto se guardó, pero hubo un problema al subir la imagen.'
+          )
+        }
+      }
 
       if (editingId) {
         setProductos(prev =>
-          prev.map(p => (p.id === productoApi.id ? productoApi : p))
+          prev.map(p => (p.id === productoConImagen.id ? productoConImagen : p))
         )
       } else {
-        setProductos(prev => [...prev, productoApi])
+        setProductos(prev => [...prev, productoConImagen])
       }
 
       resetForm()
+
     } catch (e2) {
       console.error(e2)
       setError('Error de red al hablar con la API')
@@ -270,7 +325,10 @@ function AdminProductos() {
               <input type="number" name="category_id" value={form.category_id} onChange={onChangeForm} className="rounded-lg bg-black/40 border border-white/20 px-2 py-1 text-sm outline-none"  placeholder="Ej: 204 = Calzado" />
             </div>
 
-
+            <div className="flex flex-col gap-1 text-sm md:col-span-2">
+              <label className="text-gray-300">Imagen del producto (opcional)</label>
+              <input type="file"accept="image/*"onChange={onChangeImagen}className="text-xs text-gray-200"/>{imagenFile && (<p className="text-[11px] text-gray-400">Archivo seleccionado: {imagenFile.name}</p>)}
+            </div>
 
             {/* genero: Hombre / Mujer */}
             <div className="flex flex-col gap-1 text-sm">
